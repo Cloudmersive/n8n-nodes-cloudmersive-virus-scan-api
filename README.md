@@ -15,7 +15,7 @@ Cloudmersive Virus Scan API enables you to scan files and content for viruses an
 
 ## Installation
 
-Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.  Once installed, search for **Cloudmersive Virus Scan** in the node picker.
 
 ## Operations
 
@@ -90,15 +90,62 @@ This node currently supports the following resources and operations:
 
 ## Credentials
 
-The Cloudmersive Virus Scan API is free to use.  You can get a free API key that does not expire by going to [Cloudmersive](https://portal.cloudmersive.com/signup) and signing up.
+The Cloudmersive Virus Scan API is free to use.  You can get a free API key that does not expire by going to [Cloudmersive](https://portal.cloudmersive.com/signup) and signing up.  You can use Cloudmersive SaaS or your own Cloudmersive Private Cloud.
 
 ## Compatibility
 
-_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
+* **n8n**: built and tested on n8n v1.x
+* **Runtime**: standard n8n Docker and desktop builds
+* If you run an older n8n version and encounter issues, please update to a recent 1.x build.
 
 ## Usage
 
 To use the service, simply drop the node into your flow and pass in a file as the data parameter.  Look at the CleanResult attribute returned as part of the output to confirm if your file passed the scan.
+
+### Common patterns
+
+**A) Scan an uploaded file (Webhook → Virus Scan)**
+
+1. **Webhook** node receives a file (ensure *Binary Data* is enabled).
+2. **Cloudmersive Virus Scan → File → Scan**
+
+   * *Binary Property Name*: `data` (or your property name)
+3. Use an **IF** node to branch on the scan result (the node returns the Cloudmersive response JSON; check the “clean/dirty” flags or threat details relevant to your policy).
+
+**B) Advanced scan with restrictions**
+
+* Choose **File → Advanced Scan** and set **Advanced Controls**:
+
+  * For example, disable scripts/macros, and set **Restrict File Types** to `.pdf,.docx`.
+* Optional: set **Override File Name** for better content handling.
+
+**C) Scan a website**
+
+* Choose **Website → Scan** and provide the URL (http/https).
+
+**D) Scan a single object from cloud storage**
+
+* **Azure Blob / AWS S3 / GCP Storage / SharePoint**: fill in the required fields.
+* For **GCP**, attach the service account JSON as **binary** on the incoming item (e.g., via *Read Binary File* or HTTP download) and set the *JSON Credential (Binary)* property name.
+* For **Unicode** object names (S3/GCP/SharePoint path fields), prefix the value with `base64:` and pass the Base64-encoded name.
+
+**E) Async batch jobs (Azure Blob)**
+
+* Use **Azure Blob → Advanced Scan via Batch Job** to submit.
+* The API returns an `AsyncJobID`.
+* Later, call **Batch Job → Get Status** with that ID to retrieve completion status and results.
+
+### Output
+
+* The node returns the **raw Cloudmersive API JSON** response on `items[0].json`.
+* Use standard n8n nodes (**IF**, **Set**, **Switch**) to branch, extract fields, and handle positives/negatives per your workflow.
+
+### Tips
+
+* For large files, ensure your n8n instance has sufficient upload limits and memory.
+* If you run Cloudmersive Private Cloud, set the **Base URL** in credentials so traffic never leaves your network.
+* For SharePoint, either a path or an `Item ID` can be used on Advanced Scan.
+* For S3/GCP names with non-ASCII characters, use the `base64:` prefix convention supported by the node.
 
 ## Resources
 
