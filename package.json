@@ -1,19 +1,19 @@
 {
-  "name": "n8n-nodes-<...>",
-  "version": "0.1.0",
-  "description": "",
+  "name": "n8n-nodes-cloudmersive-virus-scan-api",
+  "version": "1.1.0",
+  "description": "n8n node to use Cloudmersive Virus Scan API (file, website, and cloud storage scans.",
   "keywords": [
     "n8n-community-node-package"
   ],
   "license": "MIT",
   "homepage": "",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Cloudmersive",
+    "email": "connectors@cloudmersive.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/Cloudmersive/n8n-nodes-cloudmersive-virus-scan-api.git"
   },
   "engines": {
     "node": ">=20.15"
