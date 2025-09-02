@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-cloudmersive-virus-scan-api",
   "version": "1.1.0",
-  "description": "n8n node to use Cloudmersive Virus Scan API (file, website, and cloud storage scans.",
+  "description": "Scan files and content for viruses. Leverage continuously updated signatures for millions of threats, and advanced high-performance scanning capabilities.",
   "keywords": [
     "n8n-community-node-package"
   ],
