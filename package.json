@@ -1,12 +1,12 @@
 {
   "name": "n8n-nodes-cloudmersive-virus-scan-api",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Scan files and content for viruses. Leverage continuously updated signatures for millions of threats, and advanced high-performance scanning capabilities.",
   "keywords": [
     "n8n-community-node-package"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://cloudmersive.com/virus-api",
   "author": {
     "name": "Cloudmersive",
     "email": "connectors@cloudmersive.com"
