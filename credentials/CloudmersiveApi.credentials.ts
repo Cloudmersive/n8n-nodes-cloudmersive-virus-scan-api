@@ -2,6 +2,7 @@ import {
 	ICredentialType,
 	INodeProperties,
 	IAuthenticateGeneric,
+	ICredentialTestRequest,
 } from 'n8n-workflow';
 
 export class CloudmersiveApi implements ICredentialType {
@@ -36,6 +37,13 @@ export class CloudmersiveApi implements ICredentialType {
 			headers: {
 				Apikey: '={{$credentials.apiKey}}',
 			},
+		},
+	};
+
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL:
+				"={{ $credentials.environment === 'prod' ? 'https://api.cloudmersive.com/swagger/api/virus' : 'https://testapi.cloudmersive.com/swagger/api/virus' }}",
 		},
 	};
 }
