@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-cloudmersive-virus-scan-api",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Scan files and content for viruses. Leverage continuously updated signatures for millions of threats, and advanced high-performance scanning capabilities.",
   "keywords": [
     "n8n-community-node-package"
@@ -33,8 +33,7 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/CloudmersiveApi.credentials.js"
     ],
     "nodes": [
       "dist/nodes/CloudmersiveVirusScanApi/CloudmersiveVirusScanApi.node.js"
