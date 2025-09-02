@@ -1,4 +1,4 @@
-# n8n-nodes-_node-name_
+# n8n-nodes-cloudmersive-virus-scan-api
 
 This is an n8n community node. It lets you use Cloudmersive Virus Scan API in your n8n workflows.
 
