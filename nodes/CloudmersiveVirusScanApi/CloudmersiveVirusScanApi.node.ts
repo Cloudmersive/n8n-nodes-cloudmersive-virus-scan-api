@@ -653,7 +653,7 @@ export class CloudmersiveVirusScanApi implements INodeType {
 				};
 				if (Object.keys(headers).length) options.headers = headers;
 				if (Object.keys(qs).length) options.qs = qs;
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				
 				if (formData !== undefined) (options as any).formData = formData;
 				else if (body !== undefined) options.body = body;
 
