@@ -8,11 +8,10 @@ Cloudmersive Virus Scan API enables you to scan files and content for viruses an
 
 [Installation](#installation)  
 [Operations](#operations)  
-[Credentials](#credentials)  <!-- delete if no auth needed -->  
+[Credentials](#credentials)
 [Compatibility](#compatibility)  
-[Usage](#usage)  <!-- delete if not using this section -->  
+[Usage](#usage)
 [Resources](#resources)  
-[Version history](#version-history)  <!-- delete if not using this section -->  
 
 ## Installation
 
@@ -20,11 +19,78 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-_List the operations supported by your node._
+This node currently supports the following resources and operations:
+
+### File
+
+* **Scan** — Scan a binary file from the incoming item.
+* **Advanced Scan** — Scan a binary file with 360° content protection controls (block macros, scripts, restrict file types, etc.).
+
+  * Optional: **Override File Name** header for content-aware scanning.
+
+**Required input**
+
+* *Binary Property Name* — defaults to `data`.
+
+**Advanced controls** (Advanced Scan):
+
+* Booleans: `allowExecutables`, `allowHtml`, `allowInsecureDeserialization`, `allowInvalidFiles`, `allowMacros`, `allowOleEmbeddedObject`, `allowPasswordProtectedFiles`, `allowScripts`, `allowUnsafeArchives`, `allowXmlExternalEntities`
+* Multi-select **Options** (sent as a comma-separated `options` header):
+
+  * `blockInvalidUris`, `blockOfficeXmlOleEmbeddedFile`, `permitAuthenticodeSignedExecutables`, `permitJavascriptAndHtmlInPDFs`, `scanMultipartFile`
+* **Restrict File Types** — comma-separated extensions to permit (e.g., `.pdf,.docx,.png`).
+
+### Website
+
+* **Scan** — Scan a website URL for malicious content and threats.
+  **Input**: `URL` (http/https)
+
+### Azure Blob
+
+* **Scan** — Scan a single blob.
+* **Advanced Scan** — Advanced scan of a single blob.
+* **Advanced Scan via Batch Job** — Submit an async batch job for a single blob and poll its status with the *Batch Job → Get Status* operation.
+
+**Inputs**: `Connection String`, `Container Name`, `Blob Path` (e.g., `hello.pdf` or `/folder/sub/world.pdf`)
+
+### AWS S3
+
+* **Scan** — Scan a single object.
+* **Advanced Scan** — Advanced scan of a single object.
+
+**Inputs**: `Access Key`, `Secret Key`, `Bucket Region`, `Bucket Name`, `Key Name` (use `base64:` prefix if Unicode), optional `Role ARN`.
+
+### GCP Storage
+
+* **Scan** — Scan a single object.
+* **Advanced Scan** — Advanced scan of a single object.
+
+**Inputs**:
+
+* `Bucket Name`, `Object Name` (use `base64:` prefix if Unicode)
+* `JSON Credential (Binary)` — name of the binary property containing your GCP service account JSON (e.g., `gcpCredentials`)
+
+### SharePoint Online Site
+
+* **Scan** — Scan a file in a site drive by path.
+* **Advanced Scan** — Advanced scan by file path and/or `Item ID`.
+
+**Inputs**:
+
+* Auth: `Client ID`, `Client Secret`, `SharePoint Domain` (e.g., `mydomain.sharepoint.com`), `Site ID (GUID)`, optional `Tenant ID`
+* Path fields:
+
+  * *Scan*: `File Path` (e.g., `hello.pdf` or `/folder/sub/world.pdf`)
+  * *Advanced Scan*: `File Path` (optional), `Item ID` (optional) — either can be used; `base64:` prefix supported for Unicode paths.
+
+### Cloud Storage Batch Job
+
+* **Get Status** — Query the status/result of an async batch job.
+  **Input**: `Async Job ID`
 
 ## Credentials
 
-_If users need to authenticate with the app/service, provide details here. You should include prerequisites (such as signing up with the service), available authentication methods, and how to set them up._
+The Cloudmersive Virus Scan API is free to use.  You can get a free API key that does not expire by going to [Cloudmersive](https://portal.cloudmersive.com/signup) and signing up.
 
 ## Compatibility
 
@@ -32,17 +98,10 @@ _State the minimum n8n version, as well as which versions you test against. You 
 
 ## Usage
 
-_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
-
-_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
+To use the service, simply drop the node into your flow and pass in a file as the data parameter.  Look at the CleanResult attribute returned as part of the output to confirm if your file passed the scan.
 
 ## Resources
 
 * [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
-* _Link to app/service documentation._
-
-## Version history
-
-_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
-
+* [Cloudmersive Virus Scan API Documentation](https://api.cloudmersive.com/docs/virus.asp)
 
