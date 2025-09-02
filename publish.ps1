@@ -19,38 +19,16 @@ function Resolve-ProjectDir {
     # 1) If preferred path provided and valid, use it
     if ($PreferredPath) {
         $p = Resolve-Path -Path $PreferredPath -ErrorAction SilentlyContinue
-        if ($p) {
-            if (Test-Path (Join-Path $p "package.json")) { return $p }
-        }
+        if ($p -and (Test-Path (Join-Path $p "package.json"))) { return $p }
+        throw "Specified -ProjectPath '$PreferredPath' does not contain a package.json."
     }
 
-    # 2) If current directory is the package
+    # 2) Use current directory if it has a package.json
     if (Test-Path "package.json") {
-        try {
-            $pkg = Get-Content "package.json" -Raw | ConvertFrom-Json
-            if ($pkg.name -eq "n8n-nodes-cloudmersive-virus-scan-api") {
-                return (Resolve-Path ".")
-            }
-        } catch {}
+        return (Resolve-Path ".")
     }
 
-    # 3) Common monorepo layout: ./n8n-nodes-cloudmersive-virus-scan-api
-    $candidate = Join-Path "." "n8n-nodes-cloudmersive-virus-scan-api"
-    if (Test-Path (Join-Path $candidate "package.json")) {
-        return (Resolve-Path $candidate)
-    }
-
-    # 4) Fallback: search for the package.json whose name matches
-    $matches = Get-ChildItem -Path . -Filter "package.json" -Recurse -ErrorAction SilentlyContinue |
-        Where-Object {
-            try { ((Get-Content $_.FullName -Raw | ConvertFrom-Json).name) -eq "n8n-nodes-cloudmersive-virus-scan-api" } catch { $false }
-        }
-
-    if ($matches) {
-        return (Resolve-Path $matches[0].DirectoryName)
-    }
-
-    throw "Could not locate project folder 'n8n-nodes-cloudmersive-virus-scan-api'. Use -ProjectPath to specify it."
+    throw "Could not locate package.json in the current directory. Use -ProjectPath to specify the project folder."
 }
 
 $originalDir = Get-Location
