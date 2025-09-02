@@ -45,48 +45,6 @@ This node currently supports the following resources and operations:
 * **Scan** — Scan a website URL for malicious content and threats.
   **Input**: `URL` (http/https)
 
-### Azure Blob
-
-* **Scan** — Scan a single blob.
-* **Advanced Scan** — Advanced scan of a single blob.
-* **Advanced Scan via Batch Job** — Submit an async batch job for a single blob and poll its status with the *Batch Job → Get Status* operation.
-
-**Inputs**: `Connection String`, `Container Name`, `Blob Path` (e.g., `hello.pdf` or `/folder/sub/world.pdf`)
-
-### AWS S3
-
-* **Scan** — Scan a single object.
-* **Advanced Scan** — Advanced scan of a single object.
-
-**Inputs**: `Access Key`, `Secret Key`, `Bucket Region`, `Bucket Name`, `Key Name` (use `base64:` prefix if Unicode), optional `Role ARN`.
-
-### GCP Storage
-
-* **Scan** — Scan a single object.
-* **Advanced Scan** — Advanced scan of a single object.
-
-**Inputs**:
-
-* `Bucket Name`, `Object Name` (use `base64:` prefix if Unicode)
-* `JSON Credential (Binary)` — name of the binary property containing your GCP service account JSON (e.g., `gcpCredentials`)
-
-### SharePoint Online Site
-
-* **Scan** — Scan a file in a site drive by path.
-* **Advanced Scan** — Advanced scan by file path and/or `Item ID`.
-
-**Inputs**:
-
-* Auth: `Client ID`, `Client Secret`, `SharePoint Domain` (e.g., `mydomain.sharepoint.com`), `Site ID (GUID)`, optional `Tenant ID`
-* Path fields:
-
-  * *Scan*: `File Path` (e.g., `hello.pdf` or `/folder/sub/world.pdf`)
-  * *Advanced Scan*: `File Path` (optional), `Item ID` (optional) — either can be used; `base64:` prefix supported for Unicode paths.
-
-### Cloud Storage Batch Job
-
-* **Get Status** — Query the status/result of an async batch job.
-  **Input**: `Async Job ID`
 
 ## Credentials
 
@@ -123,18 +81,6 @@ To use the service, simply drop the node into your flow and pass in a file as th
 
 * Choose **Website → Scan** and provide the URL (http/https).
 
-**D) Scan a single object from cloud storage**
-
-* **Azure Blob / AWS S3 / GCP Storage / SharePoint**: fill in the required fields.
-* For **GCP**, attach the service account JSON as **binary** on the incoming item (e.g., via *Read Binary File* or HTTP download) and set the *JSON Credential (Binary)* property name.
-* For **Unicode** object names (S3/GCP/SharePoint path fields), prefix the value with `base64:` and pass the Base64-encoded name.
-
-**E) Async batch jobs (Azure Blob)**
-
-* Use **Azure Blob → Advanced Scan via Batch Job** to submit.
-* The API returns an `AsyncJobID`.
-* Later, call **Batch Job → Get Status** with that ID to retrieve completion status and results.
-
 ### Output
 
 * The node returns the **raw Cloudmersive API JSON** response on `items[0].json`.
@@ -144,8 +90,6 @@ To use the service, simply drop the node into your flow and pass in a file as th
 
 * For large files, ensure your n8n instance has sufficient upload limits and memory.
 * If you run Cloudmersive Private Cloud, set the **Base URL** in credentials so traffic never leaves your network.
-* For SharePoint, either a path or an `Item ID` can be used on Advanced Scan.
-* For S3/GCP names with non-ASCII characters, use the `base64:` prefix convention supported by the node.
 
 ## Resources
 
