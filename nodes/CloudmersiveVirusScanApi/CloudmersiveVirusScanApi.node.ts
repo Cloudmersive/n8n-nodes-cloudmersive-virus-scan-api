@@ -176,7 +176,7 @@ export class CloudmersiveVirusScanApi implements INodeType {
 		const baseUrl = await getBaseUrl.call(this);
 
 		for (let i = 0; i < items.length; i++) {
-		 try {
+			try {
 				const resource = this.getNodeParameter('resource', i) as string;
 				const operation = this.getNodeParameter('operation', i) as string;
 
@@ -236,6 +236,14 @@ export class CloudmersiveVirusScanApi implements INodeType {
 					pairedItem: { item: i },
 				});
 			} catch (error) {
+				// Respect continueOnFail: report the error for this item and keep processing
+				if (this.continueOnFail()) {
+					returnData.push({
+						json: { error: (error as Error).message },
+						pairedItem: { item: i },
+					});
+					continue;
+				}
 				throw new NodeApiError(this.getNode(), error as JsonObject);
 			}
 		}
