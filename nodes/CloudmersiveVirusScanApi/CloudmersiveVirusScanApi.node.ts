@@ -230,7 +230,11 @@ export class CloudmersiveVirusScanApi implements INodeType {
 					options,
 				);
 
-				returnData.push({ json: responseData as IDataObject });
+				// Maintain item linking as required by n8n QA (pairedItem)
+				returnData.push({
+					json: responseData as IDataObject,
+					pairedItem: { item: i },
+				});
 			} catch (error) {
 				throw new NodeApiError(this.getNode(), error as JsonObject);
 			}
