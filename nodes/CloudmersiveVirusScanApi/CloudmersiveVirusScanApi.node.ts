@@ -7,7 +7,7 @@ import type {
 	JsonObject,
 	IHttpRequestOptions,
 } from 'n8n-workflow';
-import { NodeApiError, NodeConnectionType } from 'n8n-workflow';
+import { NodeApiError } from 'n8n-workflow';
 
 import {
 	applyAdvancedHeaders,
@@ -24,11 +24,8 @@ export class CloudmersiveVirusScanApi implements INodeType {
 		version: 1,
 		description: 'Scan files, websites, and cloud storage for malware via Cloudmersive',
 		defaults: { name: 'Cloudmersive Virus Scan' },
-		// TS requires NodeConnectionType; linter prefers ['main'], so disable rule for these two lines.
-		// eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node
-		inputs: [NodeConnectionType.Main],
-		// eslint-disable-next-line n8n-nodes-base/node-class-description-outputs-wrong
-		outputs: [NodeConnectionType.Main],
+		inputs: ['main'],
+		outputs: ['main'],
 		credentials: [{ name: 'cloudmersiveApi', required: true }],
 		properties: [
 			/* Resource */
