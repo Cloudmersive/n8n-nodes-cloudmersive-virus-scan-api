@@ -221,11 +221,11 @@ export class CloudmersiveVirusScanApi implements INodeType {
 				if (formData !== undefined) (options as any).formData = formData;
 				else if (body !== undefined) options.body = body;
 
-				const responseData = await this.helpers.requestWithAuthentication.call(
-					this,
-					'cloudmersiveApi',
-					options,
-				);
+const responseData = await this.helpers.httpRequestWithAuthentication.call(
+this,
+'cloudmersiveApi',
+options,
+);
 
 				// Maintain item linking as required by n8n QA (pairedItem)
 				returnData.push({
