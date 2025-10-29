@@ -9,9 +9,10 @@ import type {
 } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
 
+import FormData from 'form-data';
+
 import {
 	applyAdvancedHeaders,
-	buildFormFile,
 	getBaseUrl,
 } from './GenericFunctions';
 
@@ -181,51 +182,76 @@ export class CloudmersiveVirusScanApi implements INodeType {
 				let uriPath = '';
 				const headers: IDataObject = {};
 				const qs: IDataObject = {};
-				let body: IDataObject | undefined;
-				let formData: IDataObject | undefined;
+				let body: IHttpRequestOptions['body'];
 
 				/* FILE */
 				if (resource === 'file') {
 					const binaryPropertyName = this.getNodeParameter('binaryPropertyName', i) as string;
 
+					// Build multipart/form-data body using the uploaded file
+					const form = new FormData();
+
+					const buffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
+					const binaryData = items[i].binary?.[binaryPropertyName] as IDataObject | undefined;
+					const fileName = (binaryData?.fileName as string) || 'file';
+					const contentType = (binaryData?.mimeType as string) || 'application/octet-stream';
+
+					// Cloudmersive expects the field name to be 'inputFile'
+					form.append('inputFile', buffer, { filename: fileName, contentType });
+
 					if (operation === 'scan') {
 						uriPath = '/virus/scan/file';
-						formData = await buildFormFile.call(this, i, binaryPropertyName, 'inputFile');
 					} else if (operation === 'scanAdvanced') {
 						uriPath = '/virus/scan/file/advanced';
-						formData = await buildFormFile.call(this, i, binaryPropertyName, 'inputFile');
 
 						const overrideFileName = this.getNodeParameter('overrideFileName', i, '') as string;
 						if (overrideFileName) headers['fileName'] = overrideFileName;
 
 						const adv = this.getNodeParameter('advancedControls', i, {}) as IDataObject;
 						applyAdvancedHeaders(headers, adv);
+					} else {
+						// Fallback to simple scan
+						uriPath = '/virus/scan/file';
 					}
+
+					body = form;
 				}
 
 				/* WEBSITE */
 				else if (resource === 'website') {
 					uriPath = '/virus/scan/website';
 					const url = this.getNodeParameter('url', i) as string;
-					body = { Url: url };
+					// Matches Cloudmersive WebsiteScanRequest schema
+					body = { Url: url } as IDataObject;
 				}
 
 				const options: IHttpRequestOptions = {
 					method,
 					url: `${baseUrl}${uriPath}`,
-					json: true,
 				};
-				if (Object.keys(headers).length) options.headers = headers;
+
+				// Attach query string if we ever add qs params
 				if (Object.keys(qs).length) options.qs = qs;
 
-				if (formData !== undefined) (options as any).formData = formData;
-				else if (body !== undefined) options.body = body;
+				// Headers + body
+				if (body instanceof FormData) {
+					// Merge custom headers (advanced controls) with form-data's Content-Type (boundary)
+					options.headers = { ...headers, ...body.getHeaders() };
+					options.body = body;
+					// NOTE: do not set options.json for multipart
+				} else {
+					if (Object.keys(headers).length) options.headers = headers;
+					if (body !== undefined) {
+						options.body = body;
+						options.json = true; // JSON for non-multipart body (website scan)
+					}
+				}
 
-const responseData = await this.helpers.httpRequestWithAuthentication.call(
-this,
-'cloudmersiveApi',
-options,
-);
+				const responseData = await this.helpers.httpRequestWithAuthentication.call(
+					this,
+					'cloudmersiveApi',
+					options,
+				);
 
 				// Maintain item linking as required by n8n QA (pairedItem)
 				returnData.push({
